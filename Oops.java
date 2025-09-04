@@ -17,6 +17,24 @@ class C extends A{
 class Animal{}
 class Monkey extends Animal{}
 
+class Parent{
+	private void property() {
+		System.out.println("cash + land + gold");
+	}
+	public void marry() { //--> Overridden method
+		System.out.println("Parent class method"); 
+	}
+}
+class Child extends Parent{
+	private void property() {
+		System.out.println("cash + land + gold");
+	}
+	public final void marry() { //--> Overriding method
+		System.out.println("Child class method");
+		
+	}
+}
+
 public class Oops {
 /*--> Data Hiding:
 		our internal data should not go out directly that is
@@ -65,11 +83,122 @@ public class Oops {
   			While resolving overloaded methods exact match will always get high priority
   			while resolving overloaded methods child class will get the more priority than parent class
   
+  		Overriding:
+  			whatever the parent has by default available to the child through inheritance if the child is not satisfied with 
+  			parent class method implementation then child is allow to redefine that parent class method in child class in its 
+  			own way this process is called overriding.
+  			
+  			The parent class method which is overridden is called overridden method.
+  			The child class method which is overriding is called overriding method.  
+ 		Rules for Overriding:
+ 		1).In overriding method names and arguments must be same.
+ 			That is method signature must be same.
+ 		
+ 		2).Until 1.4 version the return types must be same but from 1.5 version onwards co-variant return types are allowed.  
+ 
+ 		3).According to this Child class method return type need not be same as Parent class method return type its Child types also allowed.
+ 		Example:
+			class Parent {
+				public Object methodOne() {
+			 		return null;
+				}
+			}
+			class Child extends Parent {
+				public String methodOne() {
+			 		return null;
+				}
+			}
+
+			C:> javac -source 1.4  Parent.java //error 
+			
+			It is valid in 1.5 but invalid in 1.4.
+			-----------			------------
+			|  Object |         |  Number  |
+			-----------         ------------
+			     ^					 ^
+			     |         /         |
+			     |       \/          |
+			     |					 |
+			------------        ------------
+			|  String  |        | Integer  |
+ 		    ------------        ------------
+ 		4).private methods are not visible in the child classes hence overriding concept is not applicable for private methods.
+ 			Based on own requirement we can declare the same Parent class private method in child class also. It is valid but not overriding.
+ 			
+ 			Parent class Final methods we can't override in the Child class.
+ 			Example:
+				class Parent {
+					public final void methodOne()	{}
+				}
+				class Child extends Parent{
+					public void methodOne(){}
+				}
+			Output:
+				Compile time error: 
+ 				 methodOne() in Child cannot override methodOne() in Parent; overridden method is final
+ 			
+ 			Parent class non final methods we can override as final in child class. we can override native methods in the child classes.
+ 			
+ 		5).We should override Parent class abstract methods in child classes to provide implementation.
+ 			Example:
+				abstract class Parent {
+		 			abstract void methodOne();
+				}
+				class Child extends Parent {
+					public void methodOne() { }
+				}
+			----------------
+			|    Abstract  |
+			----------------
+			        |
+			        |-------> Overriding is Possible.
+			        |
+			----------------
+			| Non Abstract |
+			----------------
+			
+		6).We can override a non-abstract method as abstract this approach is helpful to stop availability of 
+		   Parent method implementation to the next level child classes.
+ 		Example:
+			class Parent {
+     			public void methodOne()  { }
+			}
+			abstract class Child extends Parent {
+     			public abstract void methodOne();
+			}
+ 
+ 				Final          NonFinal				Abstract
+ 				  |               |       /           | /|\		  /
+ 				 \|/			 \|/    \/           \|/ |		\/
+ 			   NonFinal         Final              NonAbstract
+ 				  X
+ 
+ 		7).While overriding we can't reduce the scope of access modifier.
+ 		Example:
+			class Parent {
+			     public void methodOne() { }
+			}
+			class Child extends Parent {
+			     protected void methodOne( )  { }
+			}
+			Output:
+			Compile time error :
+			methodOne() in Child cannot override methodOne() in Parent;
+ 			attempting to assign weaker access privileges; was public
+ 			
+ 			protected            <default>
+ 			    |	       /		 |
+ 			   \|/  	 \/			\|/
+ 		protected/public	  default/protected/public
+ 		
+ 		Private <- Default <- Protected <- Public
+ 		
  */
 	private int balance = 10000;
 	public void methodone(byte b) {
 		System.out.println("Byte arg method");
 	}
+//	Overloading ex
 	public void methodone(short s) {
 		System.out.println("Short arg method");
 	}
@@ -115,15 +244,24 @@ public class Oops {
 	public void methodFive(Monkey m) {
 		System.out.println("Monkey version "+ m);
 	}
+//	
 	public static void main(String[] args) {
 		Oops o = new Oops();
+		Parent p = new Parent();
+//		p.property(); CE
+		Child c = new Child();
+//		c.property(); CE
+		Parent p1 = new Child();
+		p1.marry();
+//		overloading ex
 		Animal a = new Animal();
 		Monkey m = new Monkey();
 		Animal a1 = new Monkey();
-		o.methodFive(null);
-		o.methodFive(a);
-		o.methodFive(m);
-		o.methodFive(a1);
+		
+//		o.methodFive(null);
+//		o.methodFive(a);
+//		o.methodFive(m);
+//		o.methodFive(a1);
 //		o.methodFour(); o/p:--> var-arg method
 //		o.methodFour(10,20);
 //		o.methodFour(10);
@@ -143,7 +281,7 @@ public class Oops {
 //		o.methodone(1000);
 //		o.methodone(10l);
 //		o.methodone(10.5f);
-
+//
 	}
 
 }
